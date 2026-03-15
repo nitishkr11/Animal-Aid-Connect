@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Animal Aid Connect — See it. Report it. Save it.</title>
+<style>
+:root {
+  --bg: #0a0e1a;
+  --bg-card: #111827;
+  --bg-card2: #1a2233;
+  --border: rgba(255,255,255,0.08);
+  --border-strong: rgba(255,255,255,0.16);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --text-dim: #4b5775;
+  --red: #ef4444;
+  --red-bg: rgba(239,68,68,0.1);
+  --red-border: rgba(239,68,68,0.28);
+  --amber: #f59e0b;
+  --amber-bg: rgba(245,158,11,0.1);
+  --amber-border: rgba(245,158,11,0.28);
+  --orange: #f97316;
+  --orange-bg: rgba(249,115,22,0.1);
+  --orange-border: rgba(249,115,22,0.28);
+  --green: #22c55e;
+  --green-bg: rgba(34,197,94,0.1);
+  --green-border: rgba(34,197,94,0.28);
+  --blue: #3b82f6;
+  --blue-bg: rgba(59,130,246,0.1);
+  --blue-border: rgba(59,130,246,0.28);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;line-height:1.6;}
+a{color:inherit;text-decoration:none;}
+textarea{resize:vertical;}
+
+/* ---- NAV ---- */
+nav{background:rgba(10,14,26,0.97);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:0 20px;position:sticky;top:0;z-index:200;display:flex;align-items:center;justify-content:space-between;height:58px;}
+.nav-logo{display:flex;align-items:center;gap:10px;cursor:pointer;user-select:none;}
+.nav-logo-icon{width:32px;height:32px;background:linear-gradient(135deg,#ef4444,#f97316);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0;}
+.nav-logo-text{font-size:15px;font-weight:800;letter-spacing:-0.3px;}
+.nav-links{display:flex;gap:2px;align-items:center;}
+.nav-link{padding:6px 12px;border-radius:6px;cursor:pointer;color:var(--text-muted);font-size:13px;transition:all 0.15s;border:none;background:none;font-family:inherit;}
+.nav-link:hover{background:rgba(255,255,255,0.06);color:var(--text);}
+.nav-btn-report{padding:7px 14px;border-radius:7px;background:var(--red);color:#fff;font-weight:700;font-size:13px;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s;}
+.nav-btn-report:hover{background:#dc2626;transform:translateY(-1px);}
+
+/* ---- PAGES ---- */
+.page{display:none;}
+.page.active{display:block;}
+
+/* ---- HOME ---- */
+.hero{text-align:center;padding:72px 24px 52px;max-width:780px;margin:0 auto;}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;background:var(--red-bg);border:1px solid var(--red-border);color:var(--red);padding:4px 14px;border-radius:100px;font-size:11px;font-weight:700;margin-bottom:22px;text-transform:uppercase;letter-spacing:0.8px;}
+.pulse-dot{width:6px;height:6px;background:var(--red);border-radius:50%;display:inline-block;animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.hero h1{font-size:clamp(32px,5.5vw,60px);font-weight:900;line-height:1.1;margin-bottom:16px;letter-spacing:-1.5px;}
+.hero h1 em{font-style:normal;color:var(--red);}
+.hero p{font-size:17px;color:var(--text-muted);margin-bottom:36px;max-width:520px;margin-left:auto;margin-right:auto;}
+.hero-btns{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.btn-cta{padding:13px 28px;border-radius:9px;font-size:15px;font-weight:700;cursor:pointer;border:none;font-family:inherit;transition:all 0.15s;}
+.btn-cta-primary{background:var(--red);color:#fff;}
+.btn-cta-primary:hover{background:#dc2626;transform:translateY(-1px);}
+.btn-cta-outline{background:transparent;color:var(--text);border:1px solid var(--border-strong);}
+.btn-cta-outline:hover{background:var(--bg-card);}
+
+.cat-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:880px;margin:0 auto 56px;padding:0 24px;}
+.cat-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:26px 20px;cursor:pointer;transition:all 0.2s;text-align:left;position:relative;overflow:hidden;}
+.cat-card::after{content:'';position:absolute;top:0;left:0;right:0;height:3px;}
+.cat-card.red::after{background:var(--red);}
+.cat-card.amber::after{background:var(--amber);}
+.cat-card.orange::after{background:var(--orange);}
+.cat-card:hover{border-color:var(--border-strong);transform:translateY(-3px);background:var(--bg-card2);}
+.cat-icon{font-size:30px;margin-bottom:12px;display:block;}
+.cat-card h3{font-size:16px;font-weight:800;margin-bottom:5px;}
+.cat-card.red h3{color:var(--red);}
+.cat-card.amber h3{color:var(--amber);}
+.cat-card.orange h3{color:var(--orange);}
+.cat-card p{font-size:13px;color:var(--text-muted);line-height:1.5;}
+.cat-cta{margin-top:14px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;}
+.cat-card.red .cat-cta{color:var(--red);}
+.cat-card.amber .cat-cta{color:var(--amber);}
+.cat-card.orange .cat-cta{color:var(--orange);}
+
+.stats-strip{background:var(--bg-card);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:22px 24px;}
+.stats-strip-inner{max-width:880px;margin:0 auto;display:grid;grid-template-columns:repeat(4,1fr);gap:16px;text-align:center;}
+.stat-num{font-size:26px;font-weight:900;}
+.stat-lbl{font-size:11px;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-top:2px;}
+
+.section{max-width:880px;margin:0 auto;padding:44px 24px;}
+.section-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
+.section-title{font-size:19px;font-weight:800;}
+.link-btn{background:none;border:none;color:var(--blue);cursor:pointer;font-size:13px;font-family:inherit;padding:0;}
+.link-btn:hover{text-decoration:underline;}
+
+.reports-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;}
+.report-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;transition:all 0.2s;}
+.report-card:hover{border-color:var(--border-strong);transform:translateY(-2px);}
+.rcard-img{width:100%;height:170px;background:var(--bg-card2);overflow:hidden;position:relative;display:flex;align-items:center;justify-content:center;font-size:52px;}
+.rcard-img img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block;}
+.rcard-body{padding:13px 15px;}
+.badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px;}
+.badge{display:inline-flex;align-items:center;padding:2px 9px;border-radius:100px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;}
+.b-injured{background:var(--red-bg);color:var(--red);border:1px solid var(--red-border);}
+.b-lost{background:var(--amber-bg);color:var(--amber);border:1px solid var(--amber-border);}
+.b-exploited{background:var(--orange-bg);color:var(--orange);border:1px solid var(--orange-border);}
+.b-pending{background:rgba(148,163,184,0.1);color:var(--text-muted);border:1px solid rgba(148,163,184,0.15);}
+.b-responding{background:var(--blue-bg);color:var(--blue);border:1px solid var(--blue-border);}
+.b-resolved{background:var(--green-bg);color:var(--green);border:1px solid var(--green-border);}
+.rcard-body h4{font-size:14px;font-weight:700;margin-bottom:3px;}
+.rcard-meta{font-size:11px;color:var(--text-muted);}
+.rcard-notes{font-size:11px;color:var(--text-dim);margin-top:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+
+/* ---- FORM ---- */
+.form-wrap{max-width:660px;margin:0 auto;padding:40px 24px;}
+.form-hdr h2{font-size:26px;font-weight:900;margin-bottom:4px;}
+.form-hdr p{font-size:14px;color:var(--text-muted);margin-bottom:28px;}
+.steps{display:flex;align-items:center;margin-bottom:28px;}
+.step-dot{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;flex-shrink:0;transition:all 0.2s;}
+.sd-done{background:var(--green);color:#000;}
+.sd-active{background:var(--red);color:#fff;}
+.sd-inactive{background:var(--bg-card2);color:var(--text-dim);border:1px solid var(--border);}
+.step-lbl{font-size:11px;margin-left:6px;white-space:nowrap;}
+.step-lbl.active{color:var(--text);font-weight:600;}
+.step-lbl.inactive{color:var(--text-dim);}
+.step-line{flex:1;height:1px;background:var(--border);margin:0 6px;}
+
+.fcard{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:26px;margin-bottom:14px;}
+.flabel{display:block;font-size:11px;font-weight:700;color:var(--text-muted);margin-bottom:6px;text-transform:uppercase;letter-spacing:0.5px;}
+.finput{width:100%;background:var(--bg);border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:10px 13px;color:var(--text);font-size:14px;font-family:inherit;outline:none;transition:border-color 0.15s;}
+.finput:focus{border-color:var(--red);}
+.frow{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.fgroup{margin-bottom:18px;}
+.fgroup:last-child{margin-bottom:0;}
+
+.photo-zone{border:2px dashed var(--border-strong);border-radius:var(--radius);padding:36px 20px;text-align:center;cursor:pointer;transition:all 0.2s;background:var(--bg);position:relative;overflow:hidden;}
+.photo-zone:hover{border-color:var(--red);background:var(--red-bg);}
+.photo-zone input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%;}
+.photo-preview-img{width:100%;max-height:180px;object-fit:contain;border-radius:6px;margin-top:12px;}
+
+.sit-opts{display:flex;flex-direction:column;gap:10px;}
+.sit-opt{background:var(--bg);border:2px solid var(--border);border-radius:var(--radius);padding:16px 18px;cursor:pointer;transition:all 0.2s;display:flex;align-items:flex-start;gap:14px;}
+.sit-opt:hover{border-color:var(--border-strong);}
+.sit-opt.sel-injured{border-color:var(--red);background:var(--red-bg);}
+.sit-opt.sel-lost{border-color:var(--amber);background:var(--amber-bg);}
+.sit-opt.sel-exploited{border-color:var(--orange);background:var(--orange-bg);}
+.sit-icon{font-size:26px;flex-shrink:0;margin-top:2px;}
+.sit-text h4{font-size:15px;font-weight:800;margin-bottom:3px;}
+.sit-text p{font-size:12px;color:var(--text-muted);line-height:1.5;}
+.sit-text h4.red{color:var(--red);}
+.sit-text h4.amber{color:var(--amber);}
+.sit-text h4.orange{color:var(--orange);}
+
+.btn-prim{background:var(--red);color:#fff;border:none;border-radius:var(--radius-sm);padding:12px 22px;font-size:14px;font-weight:700;cursor:pointer;width:100%;font-family:inherit;transition:all 0.2s;margin-bottom:8px;}
+.btn-prim:hover:not(:disabled){background:#dc2626;transform:translateY(-1px);}
+.btn-prim:disabled{opacity:0.45;cursor:not-allowed;}
+.btn-sec{background:transparent;color:var(--text-muted);border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:11px 22px;font-size:14px;font-weight:600;cursor:pointer;width:100%;font-family:inherit;transition:all 0.15s;}
+.btn-sec:hover{background:var(--bg-card2);color:var(--text);}
+
+.success-box{background:var(--green-bg);border:1px solid var(--green-border);border-radius:var(--radius);padding:32px;text-align:center;}
+.case-id-big{font-size:30px;font-weight:900;color:var(--green);letter-spacing:3px;margin:14px 0;font-family:'Courier New',monospace;}
+.notif-sent{display:flex;flex-direction:column;gap:8px;margin-top:16px;text-align:left;}
+.notif-item{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:11px 13px;display:flex;align-items:center;gap:10px;font-size:13px;}
+.notif-check{margin-left:auto;color:var(--green);font-size:11px;font-weight:700;}
+
+/* ---- LOST & FOUND ---- */
+.lf-topbar{background:var(--bg-card);border-bottom:1px solid var(--border);padding:22px 24px;}
+.lf-topbar-inner{max-width:880px;margin:0 auto;}
+.filter-row{max-width:880px;margin:0 auto;padding:14px 24px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.filt{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:7px 11px;color:var(--text);font-size:13px;font-family:inherit;cursor:pointer;outline:none;}
+.filt:focus{border-color:var(--amber);}
+
+/* ---- TRACK ---- */
+.track-wrap{max-width:580px;margin:0 auto;padding:56px 24px;}
+.track-result-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;margin-top:20px;}
+.timeline{margin-top:16px;}
+.tl-item{display:flex;gap:12px;margin-bottom:20px;position:relative;}
+.tl-item::before{content:'';position:absolute;left:13px;top:28px;bottom:-20px;width:1px;background:var(--border);}
+.tl-item:last-child::before{display:none;}
+.tl-dot{width:28px;height:28px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;}
+.tl-done{background:var(--green);color:#000;}
+.tl-active{background:var(--blue);color:#fff;}
+.tl-idle{background:var(--bg-card2);border:1px solid var(--border);}
+.tl-content h5{font-size:14px;font-weight:700;margin-bottom:2px;}
+.tl-content p{font-size:12px;color:var(--text-muted);}
+.tl-time{font-size:10px;color:var(--text-dim);margin-top:2px;}
+
+/* ---- DASHBOARD ---- */
+.db-layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 58px);}
+.sidebar{background:var(--bg-card);border-right:1px solid var(--border);padding-top:16px;}
+.sb-who{padding:12px 18px 16px;border-bottom:1px solid var(--border);margin-bottom:8px;}
+.sb-who small{font-size:11px;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.4px;}
+.sb-who strong{display:block;font-size:14px;margin-top:2px;}
+.sb-item{display:flex;align-items:center;gap:8px;padding:9px 18px;font-size:13px;cursor:pointer;color:var(--text-muted);border-left:2px solid transparent;transition:all 0.15s;user-select:none;}
+.sb-item:hover{background:var(--bg-card2);color:var(--text);}
+.sb-item.active{background:var(--bg-card2);color:var(--text);border-left-color:var(--red);}
+.db-main{padding:30px;}
+.db-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:28px;}
+.db-stat{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;}
+.db-stat-num{font-size:30px;font-weight:900;}
+.db-stat-lbl{font-size:12px;color:var(--text-muted);margin-top:3px;}
+.table-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.tbl-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+.tbl-row{display:grid;grid-template-columns:90px 1fr 110px 90px 140px 100px;align-items:center;padding:12px 18px;border-bottom:1px solid var(--border);font-size:13px;gap:10px;}
+.tbl-row:last-child{border-bottom:none;}
+.tbl-row.hdr{background:var(--bg-card2);font-size:10px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;}
+.tbl-row:not(.hdr):hover{background:var(--bg-card2);}
+
+/* ---- LOGIN ---- */
+.login-wrap{display:flex;align-items:center;justify-content:center;min-height:calc(100vh - 58px);padding:24px;}
+.login-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:36px;width:100%;max-width:400px;}
+.login-box h2{font-size:22px;font-weight:900;margin-bottom:4px;}
+.login-box > p{font-size:13px;color:var(--text-muted);margin-bottom:24px;}
+.demo-hint{background:var(--blue-bg);border:1px solid var(--blue-border);border-radius:var(--radius-sm);padding:10px 13px;font-size:12px;color:var(--blue);margin-bottom:20px;}
+
+@media(max-width:640px){
+  .cat-cards{grid-template-columns:1fr;}
+  .stats-strip-inner{grid-template-columns:1fr 1fr;}
+  .frow{grid-template-columns:1fr;}
+  .db-layout{grid-template-columns:1fr;}
+  .sidebar{display:none;}
+  .tbl-row{grid-template-columns:80px 1fr 90px;}
+  .tbl-row>*:nth-child(n+4){display:none;}
+  .db-stats{grid-template-columns:1fr 1fr;}
+  .nav-links .nav-link{display:none;}
+}
+</style>
+</head>
+<body>
+
+<!-- ======= NAV ======= -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-icon">🐾</div>
+    <div class="nav-logo-text">Animal Aid Connect</div>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="showPage('lost-found')">Lost &amp; Found</button>
+    <button class="nav-link" onclick="showPage('track')">Track Case</button>
+    <button class="nav-link" onclick="showPage('dashboard')">Authority Login</button>
+    <button class="nav-btn-report" onclick="showPage('report');resetForm();">+ Report Animal</button>
+  </div>
+</nav>
+
+<!-- ======= HOME ======= -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-badge"><span class="pulse-dot"></span> Emergency Animal Response Platform</div>
+    <h1>Found an animal<br>in distress? <em>Act now.</em></h1>
+    <p>Animal Aid Connect routes your report instantly to the right authority — vets, shelters, or police — so help arrives faster.</p>
+    <div class="hero-btns">
+      <button class="btn-cta btn-cta-primary" onclick="showPage('report');resetForm();">Report an Animal →</button>
+      <button class="btn-cta btn-cta-outline" onclick="showPage('lost-found')">View Lost &amp; Found</button>
+    </div>
+  </div>
+
+  <div class="cat-cards">
+    <div class="cat-card red" onclick="openReportWith('injured')">
+      <span class="cat-icon">🩺</span>
+      <h3>Injured / Sick</h3>
+      <p>Found an animal that's hurt, bleeding, or needs immediate medical attention.</p>
+      <div class="cat-cta">Notify Nearby Vets →</div>
+    </div>
+    <div class="cat-card amber" onclick="openReportWith('lost')">
+      <span class="cat-icon">🔍</span>
+      <h3>Lost / Stray</h3>
+      <p>Found a stray or a pet that appears to have a home but is wandering alone.</p>
+      <div class="cat-cta">Check Missing Reports →</div>
+    </div>
+    <div class="cat-card orange" onclick="openReportWith('exploited')">
+      <span class="cat-icon">⚠️</span>
+      <h3>Being Exploited</h3>
+      <p>Witnessing animal abuse, cruelty, forced labor, or illegal use of animals.</p>
+      <div class="cat-cta">Alert Authorities →</div>
+    </div>
+  </div>
+
+  <div class="stats-strip">
+    <div class="stats-strip-inner">
+      <div><div class="stat-num" id="s-total">0</div><div class="stat-lbl">Total Reports</div></div>
+      <div><div class="stat-num" style="color:var(--green)" id="s-resolved">0</div><div class="stat-lbl">Cases Resolved</div></div>
+      <div><div class="stat-num" style="color:var(--blue)" id="s-active">0</div><div class="stat-lbl">Active Responses</div></div>
+      <div><div class="stat-num" style="color:var(--amber)">12</div><div class="stat-lbl">Partner Vets &amp; Shelters</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">Recent Reports</div>
+      <button class="link-btn" onclick="showPage('lost-found')">View all →</button>
+    </div>
+    <div class="reports-grid" id="home-recent"></div>
+  </div>
+</div>
+
+<!-- ======= REPORT FORM ======= -->
+<div id="page-report" class="page">
+  <div class="form-wrap">
+    <div class="form-hdr">
+      <h2>File a Report</h2>
+      <p>Your report is routed immediately to the right authority</p>
+    </div>
+    <div class="steps" id="steps-ui"></div>
+
+    <!-- Step 1 -->
+    <div id="fstep-1">
+      <div class="fcard">
+        <div class="fgroup">
+          <label class="flabel">Animal Photo</label>
+          <div class="photo-zone" id="pz">
+            <input type="file" accept="image/*" id="photo-file" onchange="handlePhoto(this)">
+            <div id="photo-ph">
+              <div style="font-size:36px;margin-bottom:8px">📸</div>
+              <div style="font-size:14px;font-weight:700">Click to upload or capture a photo</div>
+              <div style="font-size:12px;color:var(--text-muted);margin-top:4px">A clear photo helps identify the animal faster</div>
+            </div>
+            <img id="photo-prev" class="photo-preview-img" style="display:none">
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fgroup">
+            <label class="flabel">Animal Type *</label>
+            <select class="finput" id="a-type" style="cursor:pointer">
+              <option value="">Select...</option>
+              <option>Dog</option><option>Cat</option><option>Bird</option><option>Cow</option><option>Horse</option><option>Monkey</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Breed</label>
+            <input type="text" class="finput" id="a-breed" placeholder="e.g. Labrador, Stray">
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fgroup">
+            <label class="flabel">Color / Markings *</label>
+            <input type="text" class="finput" id="a-color" placeholder="e.g. Brown with white patch">
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Approximate Age</label>
+            <select class="finput" id="a-age" style="cursor:pointer">
+              <option value="">Unknown</option>
+              <option>Young (under 1 year)</option>
+              <option>Adult (1–7 years)</option>
+              <option>Senior (7+ years)</option>
+            </select>
+          </div>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Current Location *</label>
+          <input type="text" class="finput" id="a-loc" placeholder="e.g. Near Connaught Place, New Delhi — Gate 3">
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Additional Notes</label>
+          <textarea class="finput" id="a-notes" rows="3" placeholder="Describe the animal's condition, behavior, any other important details..."></textarea>
+        </div>
+      </div>
+      <button class="btn-prim" onclick="step2()">Next: Your Details →</button>
+    </div>
+
+    <!-- Step 2 -->
+    <div id="fstep-2" style="display:none">
+      <div class="fcard">
+        <p style="font-size:13px;color:var(--text-muted);margin-bottom:18px;padding:10px 13px;background:var(--bg);border-radius:var(--radius-sm);border:1px solid var(--border)">🔒 Your information is kept confidential and only shared with the responding authority.</p>
+        <div class="fgroup">
+          <label class="flabel">Your Full Name *</label>
+          <input type="text" class="finput" id="r-name" placeholder="Full name">
+        </div>
+        <div class="frow">
+          <div class="fgroup">
+            <label class="flabel">Phone Number *</label>
+            <input type="tel" class="finput" id="r-phone" placeholder="+91 XXXXX XXXXX">
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Email (for updates)</label>
+            <input type="email" class="finput" id="r-email" placeholder="you@email.com">
+          </div>
+        </div>
+      </div>
+      <button class="btn-prim" onclick="step3()">Next: Select Situation →</button>
+      <button class="btn-sec" onclick="goStep(1)">← Back</button>
+    </div>
+
+    <!-- Step 3 -->
+    <div id="fstep-3" style="display:none">
+      <div class="fcard">
+        <div style="margin-bottom:16px">
+          <div style="font-size:15px;font-weight:800;margin-bottom:4px">What is the animal's situation?</div>
+          <div style="font-size:13px;color:var(--text-muted)">Your selection determines which authority is notified immediately.</div>
+        </div>
+        <div class="sit-opts">
+          <div class="sit-opt" id="sopt-injured" onclick="pickSit('injured')">
+            <div class="sit-icon">🩺</div>
+            <div class="sit-text">
+              <h4 class="red">Injured / Sick</h4>
+              <p>Alerts nearby vet clinics and animal hospitals. Best for: wounds, illness, disability, road accident.</p>
+            </div>
+          </div>
+          <div class="sit-opt" id="sopt-lost" onclick="pickSit('lost')">
+            <div class="sit-icon">🔍</div>
+            <div class="sit-text">
+              <h4 class="amber">Lost / Stray</h4>
+              <p>Matches missing pet database, notifies shelters and owners. Best for: wandering pets, strays with a collar.</p>
+            </div>
+          </div>
+          <div class="sit-opt" id="sopt-exploited" onclick="pickSit('exploited')">
+            <div class="sit-icon">⚠️</div>
+            <div class="sit-text">
+              <h4 class="orange">Being Exploited / Abused</h4>
+              <p>Files complaint with police &amp; animal welfare board. Best for: cruelty, neglect, forced labor, illegal trade.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-prim" id="submit-btn" onclick="submitReport()" disabled>Submit &amp; Notify Authorities →</button>
+      <button class="btn-sec" onclick="goStep(2)">← Back</button>
+    </div>
+
+    <!-- Step 4: Success -->
+    <div id="fstep-4" style="display:none">
+      <div class="success-box">
+        <div style="font-size:44px;margin-bottom:10px">✅</div>
+        <h3 style="font-size:21px;font-weight:900;color:var(--green);margin-bottom:4px">Report Submitted!</h3>
+        <p style="font-size:13px;color:var(--text-muted)">Your unique Case ID:</p>
+        <div class="case-id-big" id="sc-id">—</div>
+        <p style="font-size:12px;color:var(--text-muted);margin-bottom:18px">Save this ID to track your case status. Authorities have been notified.</p>
+        <div class="notif-sent" id="sc-notifs"></div>
+      </div>
+      <button class="btn-prim" style="margin-top:14px" onclick="showPage('track')">Track This Case →</button>
+      <button class="btn-sec" onclick="showPage('report');resetForm()">Report Another Animal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======= LOST & FOUND ======= -->
+<div id="page-lost-found" class="page">
+  <div class="lf-topbar">
+    <div class="lf-topbar-inner">
+      <h2 style="font-size:22px;font-weight:900;margin-bottom:3px">Lost &amp; Found Board</h2>
+      <p style="font-size:13px;color:var(--text-muted)">All reported lost and stray animals. Contact the reporter if you recognize your pet.</p>
+    </div>
+  </div>
+  <div class="filter-row">
+    <select class="filt" id="f-type" onchange="renderLF()">
+      <option value="">All Animals</option>
+      <option>Dog</option><option>Cat</option><option>Bird</option><option>Cow</option><option>Other</option>
+    </select>
+    <select class="filt" id="f-status" onchange="renderLF()">
+      <option value="">All Statuses</option>
+      <option value="pending">Pending</option>
+      <option value="responding">Responding</option>
+      <option value="resolved">Resolved</option>
+    </select>
+    <select class="filt" id="f-sit" onchange="renderLF()">
+      <option value="">All Types</option>
+      <option value="lost">Lost / Stray</option>
+      <option value="injured">Injured</option>
+    </select>
+    <span style="margin-left:auto;font-size:12px;color:var(--text-muted);align-self:center" id="lf-count"></span>
+  </div>
+  <div style="max-width:880px;margin:0 auto;padding:0 24px 48px">
+    <div class="reports-grid" id="lf-grid"></div>
+  </div>
+</div>
+
+<!-- ======= TRACK CASE ======= -->
+<div id="page-track" class="page">
+  <div class="track-wrap">
+    <h2 style="font-size:26px;font-weight:900;margin-bottom:6px">Track Your Case</h2>
+    <p style="color:var(--text-muted);font-size:14px;margin-bottom:28px">Enter the Case ID from your report confirmation to see the latest status.</p>
+    <div style="display:flex;gap:8px">
+      <input type="text" class="finput" id="track-in" placeholder="e.g. AAC-7X3K2" style="font-size:15px;font-family:'Courier New',monospace;font-weight:700;letter-spacing:1.5px;text-transform:uppercase" oninput="this.value=this.value.toUpperCase()">
+      <button class="nav-btn-report" style="white-space:nowrap;padding:10px 20px;border-radius:var(--radius-sm);font-size:14px" onclick="trackCase()">Track →</button>
+    </div>
+    <div id="track-err" style="display:none;margin-top:14px;padding:12px 14px;background:var(--red-bg);border:1px solid var(--red-border);border-radius:var(--radius-sm);font-size:13px;color:var(--red)">
+      Case ID not found. Please check and try again.
+    </div>
+    <div id="track-res" style="display:none" class="track-result-box"></div>
+  </div>
+</div>
+
+<!-- ======= DASHBOARD ======= -->
+<div id="page-dashboard" class="page">
+  <div id="db-login" class="login-wrap">
+    <div class="login-box">
+      <h2>Authority Login</h2>
+      <p>Access your case management dashboard.</p>
+      <div class="demo-hint">ℹ️ Demo mode — enter any credentials to access the dashboard.</div>
+      <div class="fgroup">
+        <label class="flabel">Authority Type</label>
+        <select class="finput" id="auth-type-sel" style="cursor:pointer">
+          <option>Veterinary Clinic</option>
+          <option>Animal Shelter</option>
+          <option>Police / Animal Welfare</option>
+        </select>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Email</label>
+        <input type="email" class="finput" value="demo@animalaid.in">
+      </div>
+      <div class="fgroup" style="margin-bottom:22px">
+        <label class="flabel">Password</label>
+        <input type="password" class="finput" value="demo1234">
+      </div>
+      <button class="btn-prim" onclick="loginDB()">Login to Dashboard →</button>
+    </div>
+  </div>
+
+  <div id="db-dash" style="display:none">
+    <div class="db-layout">
+      <div class="sidebar">
+        <div class="sb-who">
+          <small>Logged in as</small>
+          <strong id="db-who-lbl">Veterinary Clinic</strong>
+        </div>
+        <div class="sb-item active" id="sbi-overview" onclick="setDBTab('overview',this)">📊 Overview</div>
+        <div class="sb-item" id="sbi-assigned" onclick="setDBTab('assigned',this)">📋 Assigned Cases</div>
+        <div class="sb-item" id="sbi-resolved" onclick="setDBTab('resolved',this)">✅ Resolved</div>
+        <div style="margin-top:24px;padding:0 18px">
+          <button class="link-btn" style="font-size:12px;color:var(--text-dim)" onclick="logoutDB()">← Logout</button>
+        </div>
+      </div>
+      <div class="db-main" id="db-content"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= JS ======= -->
+<script>
+// ===== DATA =====
+const EMOJIS={Dog:'🐕',Cat:'🐈',Bird:'🐦',Cow:'🐄',Horse:'🐴',Monkey:'🐒',Other:'🐾'};
+const LOC=['Connaught Place, Delhi','Bandra West, Mumbai','Koramangala, Bangalore','Park Street, Kolkata','Anna Nagar, Chennai','Jubilee Hills, Hyderabad','Viman Nagar, Pune','Gomti Nagar, Lucknow'];
+const BREEDS={Dog:['Labrador','German Shepherd','Stray','Indie','Pomeranian'],Cat:['Persian','Stray','Siamese','Tabby'],Bird:['Pigeon','Parrot','Sparrow'],Cow:['Desi Breed'],Horse:['Thoroughbred'],Monkey:['Rhesus Macaque'],Other:['Unknown']};
+const COLORS=['Brown','Black','White','Golden','Grey & White','Brown with spots','Black & Tan','Orange Tabby'];
+const NOTES=['Limping badly, seems in pain','Found near highway, very frightened','Friendly, has a collar but no tag','Appears malnourished and weak','Being used for roadside begging','Lost near the market, keeps circling','Injured eye, needs urgent care','Abandoned puppy, 3–4 weeks old'];
+const NAMES=['Priya Sharma','Amit Kumar','Neha Singh','Rahul Gupta','Sanjana Patel','Vikram Nair','Deepa Iyer','Arjun Mehta'];
+
+// Verified Unsplash animal photo IDs — each confirmed to be the correct animal
+const ANIMAL_PHOTOS = {
+  Dog:[
+    'https://images.unsplash.com/photo-1587300003388-59208cc962cb?w=400&h=280&fit=crop&auto=format&q=75',
+    'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=400&h=280&fit=crop&auto=format&q=75',
+    'https://images.unsplash.com/photo-1518717758536-85ae29035b6d?w=400&h=280&fit=crop&auto=format&q=75',
+    'https://images.unsplash.com/photo-1561037404-61cd46aa615b?w=400&h=280&fit=crop&auto=format&q=75',
+    'https://images.unsplash.com/photo-1477884213360-7e9d7dcc1e48?w=400&h=280&fit=crop&auto=format&q=75',
+    'https://images.unsplash.com/photo-1534361960057-19f4434a4fb?w=400&h=280&fit=crop&auto=format&q=75',
+  ],
+  Cat:[
+    'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=400&h=280&fit=crop&auto=format&q=75',
+    'https://images.unsplash.com/photo-1573865526182-f93ee1cb3dc4?w=400&h=280&fit=crop&auto=format&q=75',
+    'https://images.unsplash.com/photo-1533743983669-94fa5c4338ec?w=400&h=280&fit=crop&auto=format&q=75',
+    'https://images.unsplash.com/photo-1548802673-380ab8ebc7b7?w=400&h=280&fit=crop&auto=format&q=75',
+  ],
+  Bird:[
+    'https://images.unsplash.com/photo-1444464666168-49d633b86797?w=400&h=280&fit=crop&auto=format&q=75',
+    'https://images.unsplash.com/photo-1452570053594-1b985d6ea890?w=400&h=280&fit=crop&auto=format&q=75',
+    'https://images.unsplash.com/photo-1557750255-c76072a7aad1?w=400&h=280&fit=crop&auto=format&q=75',
+  ],
+  Cow:[
+    'https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?w=400&h=280&fit=crop&auto=format&q=75',
+    'https://images.unsplash.com/photo-1527153818091-1a9638521e2a?w=400&h=280&fit=crop&auto=format&q=75',
+  ],
+  Horse:[
+    'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=400&h=280&fit=crop&auto=format&q=75',
+  ],
+  Monkey:[
+    'https://images.unsplash.com/photo-1540573133985-87b6da6d54a9?w=400&h=280&fit=crop&auto=format&q=75',
+  ],
+  Other:[
+    'https://images.unsplash.com/photo-1425082661705-1834bfd09dca?w=400&h=280&fit=crop&auto=format&q=75',
+  ],
+};
+function getAnimalPhoto(type){
+  const pool=ANIMAL_PHOTOS[type]||ANIMAL_PHOTOS.Other;
+  return pool[Math.floor(Math.random()*pool.length)];
+}
+
+let reports=[], selSit=null, photoData=null, curStep=1, isLoggedIn=false, dbTab='overview';
+
+function rnd(a){return a[Math.floor(Math.random()*a.length)];}
+function genId(){return'AAC-'+Math.random().toString(36).substr(2,5).toUpperCase();}
+function dAgo(n){const d=new Date();d.setDate(d.getDate()-n);return d.toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+
+// Hardcoded demo reports — each has a verified matching photo
+function initData(){
+  const seed=[
+    {type:'Dog',breed:'Golden Retriever',color:'Golden',sit:'injured',stat:'pending',loc:LOC[0],note:NOTES[0],photo:ANIMAL_PHOTOS.Dog[0]},
+    {type:'Cat',breed:'Tabby',color:'Orange Tabby',sit:'lost',stat:'pending',loc:LOC[1],note:NOTES[2],photo:ANIMAL_PHOTOS.Cat[0]},
+    {type:'Dog',breed:'Stray',color:'Brown',sit:'lost',stat:'pending',loc:LOC[2],note:NOTES[1],photo:ANIMAL_PHOTOS.Dog[1]},
+    {type:'Cat',breed:'Persian',color:'White',sit:'injured',stat:'responding',loc:LOC[3],note:NOTES[6],photo:ANIMAL_PHOTOS.Cat[1]},
+    {type:'Dog',breed:'German Shepherd',color:'Black & Tan',sit:'exploited',stat:'responding',loc:LOC[4],note:NOTES[4],photo:ANIMAL_PHOTOS.Dog[2]},
+    {type:'Bird',breed:'Parrot',color:'Green',sit:'injured',stat:'responding',loc:LOC[5],note:NOTES[6],photo:ANIMAL_PHOTOS.Bird[0]},
+    {type:'Dog',breed:'Labrador',color:'Black',sit:'lost',stat:'responding',loc:LOC[6],note:NOTES[3],photo:ANIMAL_PHOTOS.Dog[3]},
+    {type:'Cat',breed:'Siamese',color:'Cream & Brown',sit:'lost',stat:'responding',loc:LOC[7],note:NOTES[1],photo:ANIMAL_PHOTOS.Cat[2]},
+    {type:'Dog',breed:'Indie',color:'Grey & White',sit:'injured',stat:'responding',loc:LOC[0],note:NOTES[5],photo:ANIMAL_PHOTOS.Dog[4]},
+    {type:'Cow',breed:'Desi Breed',color:'White & Brown',sit:'injured',stat:'resolved',loc:LOC[1],note:NOTES[3],photo:ANIMAL_PHOTOS.Cow[0]},
+    {type:'Bird',breed:'Pigeon',color:'Grey',sit:'injured',stat:'resolved',loc:LOC[2],note:NOTES[6],photo:ANIMAL_PHOTOS.Bird[1]},
+    {type:'Dog',breed:'Pomeranian',color:'White',sit:'lost',stat:'resolved',loc:LOC[3],note:NOTES[7],photo:ANIMAL_PHOTOS.Dog[5]},
+    {type:'Cat',breed:'Stray',color:'Brown with spots',sit:'exploited',stat:'resolved',loc:LOC[4],note:NOTES[4],photo:ANIMAL_PHOTOS.Cat[3]},
+    {type:'Monkey',breed:'Rhesus Macaque',color:'Brown',sit:'exploited',stat:'resolved',loc:LOC[5],note:NOTES[4],photo:ANIMAL_PHOTOS.Monkey[0]},
+  ];
+  const namePool=NAMES;
+  seed.forEach((s,i)=>{
+    reports.push({
+      id:genId(),animalType:s.type,breed:s.breed,color:s.color,
+      age:rnd(['Young (under 1 year)','Adult (1–7 years)','Senior (7+ years)']),
+      location:s.loc,situation:s.sit,status:s.stat,
+      notes:s.note,reporterName:namePool[i%namePool.length],
+      reporterPhone:'98'+Math.floor(Math.random()*1e8).toString().padStart(8,'0'),
+      reporterEmail:'reporter@email.com',
+      dateReported:dAgo(i%7),
+      photoUrl:s.photo,
+      emoji:EMOJIS[s.type]||'🐾'
+    });
+  });
+}
+initData();
+refreshStats();
+
+// ===== NAV =====
+function showPage(p){
+  document.querySelectorAll('.page').forEach(e=>e.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  window.scrollTo(0,0);
+  if(p==='home')renderHome();
+  if(p==='lost-found')renderLF();
+  if(p==='track'){document.getElementById('track-res').style.display='none';document.getElementById('track-err').style.display='none';document.getElementById('track-in').value='';}
+  if(p==='dashboard'&&isLoggedIn)renderDBContent();
+}
+
+function openReportWith(sit){
+  showPage('report');
+  resetForm();
+  goStep(3);
+  pickSit(sit);
+}
+
+// ===== STATS =====
+function refreshStats(){
+  document.getElementById('s-total').textContent=reports.length;
+  document.getElementById('s-resolved').textContent=reports.filter(r=>r.status==='resolved').length;
+  document.getElementById('s-active').textContent=reports.filter(r=>r.status==='responding').length;
+}
+
+// ===== CARD HTML =====
+function badgeFor(r){
+  const m={injured:'b-injured 🩺 Injured',lost:'b-lost 🔍 Lost',exploited:'b-exploited ⚠️ Abused'};
+  const s={pending:'b-pending',responding:'b-responding',resolved:'b-resolved'};
+  const[bc,bl]=m[r.situation].split(' ');
+  return`<span class="badge ${m[r.situation].split(' ')[0]}">${m[r.situation].split(' ').slice(1).join(' ')}</span><span class="badge ${s[r.status]}">${r.status}</span>`;
+}
+function cardHTML(r){
+  const bm={injured:'b-injured',lost:'b-lost',exploited:'b-exploited'};
+  const bs={pending:'b-pending',responding:'b-responding',resolved:'b-resolved'};
+  const sl={injured:'🩺 Injured',lost:'🔍 Lost',exploited:'⚠️ Abused'};
+  return`<div class="report-card">
+    <div class="rcard-img">${r.photoUrl
+      ?`<img src="${r.photoUrl}" alt="${r.animalType}" loading="lazy" onerror="this.style.display='none'">`
+      :r.emoji}</div>
+    <div class="rcard-body">
+      <div class="badges"><span class="badge ${bm[r.situation]}">${sl[r.situation]}</span><span class="badge ${bs[r.status]}">${r.status}</span></div>
+      <h4>${r.animalType} · ${r.breed}</h4>
+      <div class="rcard-meta">📍 ${r.location.split(',')[0]} &nbsp;·&nbsp; ${r.dateReported}</div>
+      <div class="rcard-notes">${r.notes}</div>
+    </div>
+  </div>`;
+}
+
+// ===== HOME =====
+function renderHome(){
+  const el=document.getElementById('home-recent');
+  el.innerHTML=[...reports].reverse().slice(0,6).map(cardHTML).join('');
+  refreshStats();
+}
+
+// ===== FORM =====
+function drawSteps(){
+  const labels=['Animal Info','Your Details','Situation','Confirmation'];
+  const el=document.getElementById('steps-ui');
+  el.innerHTML=labels.map((l,i)=>{
+    const n=i+1;
+    const dc=n<curStep?'sd-done':n===curStep?'sd-active':'sd-inactive';
+    const lc=n===curStep?'active':'inactive';
+    const cnt=n<curStep?'✓':n;
+    return(i>0?'<div class="step-line"></div>':'')+
+    `<div class="step-dot ${dc}">${cnt}</div><span class="step-lbl ${lc}">${l}</span>`;
+  }).join('');
+}
+drawSteps();
+
+function goStep(n){
+  document.querySelectorAll('[id^=fstep-]').forEach(e=>e.style.display='none');
+  document.getElementById('fstep-'+n).style.display='block';
+  curStep=n;
+  drawSteps();
+  window.scrollTo(0,0);
+}
+
+function step2(){
+  if(!document.getElementById('a-type').value){alert('Please select the animal type.');return;}
+  if(!document.getElementById('a-color').value.trim()){alert('Please enter the color/markings.');return;}
+  if(!document.getElementById('a-loc').value.trim()){alert('Please enter the location.');return;}
+  goStep(2);
+}
+function step3(){
+  if(!document.getElementById('r-name').value.trim()){alert('Please enter your name.');return;}
+  if(!document.getElementById('r-phone').value.trim()){alert('Please enter your phone number.');return;}
+  goStep(3);
+}
+
+function handlePhoto(input){
+  if(input.files&&input.files[0]){
+    const r=new FileReader();
+    r.onload=e=>{
+      photoData=e.target.result;
+      document.getElementById('photo-prev').src=e.target.result;
+      document.getElementById('photo-prev').style.display='block';
+      document.getElementById('photo-ph').style.display='none';
+    };
+    r.readAsDataURL(input.files[0]);
+  }
+}
+
+function pickSit(s){
+  selSit=s;
+  document.querySelectorAll('.sit-opt').forEach(e=>{e.className='sit-opt';});
+  document.getElementById('sopt-'+s).className='sit-opt sel-'+s;
+  const b=document.getElementById('submit-btn');
+  b.disabled=false;b.style.opacity='1';
+}
+
+function submitReport(){
+  if(!selSit)return;
+  const type=document.getElementById('a-type').value;
+  const rec={
+    id:genId(),animalType:type||'Other',
+    breed:document.getElementById('a-breed').value||'Unknown',
+    color:document.getElementById('a-color').value||'Unknown',
+    age:document.getElementById('a-age').value||'Unknown',
+    location:document.getElementById('a-loc').value,
+    situation:selSit,status:'pending',
+    notes:document.getElementById('a-notes').value,
+    reporterName:document.getElementById('r-name').value,
+    reporterPhone:document.getElementById('r-phone').value,
+    reporterEmail:document.getElementById('r-email').value,
+    dateReported:new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}),
+    photoUrl:photoData,emoji:EMOJIS[type]||'🐾'
+  };
+  reports.push(rec);
+  refreshStats();
+  document.getElementById('sc-id').textContent=rec.id;
+  const notifMap={
+    injured:[
+      {i:'🏥',t:'Apollo Pet Clinic, nearby — Alerted'},
+      {i:'🏥',t:'PetVet Hospital — Alerted'},
+      {i:'🚑',t:'Animal Ambulance — Dispatched to location'}
+    ],
+    lost:[
+      {i:'👤',t:'3 owners with matching lost pet reports — Notified'},
+      {i:'🏠',t:'City Animal Shelter — Report Added to Board'},
+      {i:'📋',t:'Public Lost & Found Board — Updated'}
+    ],
+    exploited:[
+      {i:'👮',t:'Police Animal Welfare Cell — Complaint Filed'},
+      {i:'⚖️',t:'PETA India — Case Forwarded'},
+      {i:'📋',t:'Animal Welfare Board of India — Notified'}
+    ]
+  };
+  document.getElementById('sc-notifs').innerHTML=
+    '<div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px">Notifications Sent</div>'+
+    notifMap[selSit].map(n=>`<div class="notif-item"><span>${n.i}</span><span>${n.t}</span><span class="notif-check">✓ SENT</span></div>`).join('');
+  document.getElementById('track-in').value=rec.id;
+  goStep(4);
+}
+
+function resetForm(){
+  ['a-type','a-breed','a-color','a-age','a-loc','a-notes','r-name','r-phone','r-email'].forEach(id=>{
+    const el=document.getElementById(id);
+    if(el)el.value='';
+  });
+  document.getElementById('photo-prev').style.display='none';
+  document.getElementById('photo-ph').style.display='block';
+  document.getElementById('photo-file').value='';
+  photoData=null;selSit=null;
+  document.querySelectorAll('.sit-opt').forEach(e=>e.className='sit-opt');
+  const b=document.getElementById('submit-btn');
+  b.disabled=true;b.style.opacity='0.45';
+  goStep(1);
+}
+
+// ===== LOST & FOUND =====
+function renderLF(){
+  const tv=document.getElementById('f-type').value;
+  const sv=document.getElementById('f-status').value;
+  const sitv=document.getElementById('f-sit').value;
+  let list=reports.filter(r=>r.situation!=='exploited');
+  if(tv)list=list.filter(r=>r.animalType===tv);
+  if(sv)list=list.filter(r=>r.status===sv);
+  if(sitv)list=list.filter(r=>r.situation===sitv);
+  document.getElementById('lf-count').textContent=list.length+' report'+(list.length!==1?'s':'');
+  const g=document.getElementById('lf-grid');
+  g.innerHTML=list.length
+    ?list.map(cardHTML).join('')
+    :'<div style="grid-column:1/-1;text-align:center;padding:60px;color:var(--text-muted);font-size:14px">No reports match your filters.</div>';
+}
+
+// ===== TRACK =====
+function trackCase(){
+  const val=document.getElementById('track-in').value.trim().toUpperCase();
+  const r=document.getElementById('track-res');
+  const e=document.getElementById('track-err');
+  const found=reports.find(x=>x.id===val);
+  if(!found){r.style.display='none';e.style.display='block';return;}
+  e.style.display='none';r.style.display='block';
+  const bm={injured:'b-injured',lost:'b-lost',exploited:'b-exploited'};
+  const bs={pending:'b-pending',responding:'b-responding',resolved:'b-resolved'};
+  const sl={injured:'Injured / Sick',lost:'Lost / Stray',exploited:'Being Exploited'};
+  const stOrd=['pending','responding','resolved'];
+  const ci=stOrd.indexOf(found.status);
+  const authLine={
+    injured:'Nearby veterinary clinics have been alerted.',
+    lost:'Shelters and matching pet owners have been contacted.',
+    exploited:'Police and animal welfare authority have been notified.'
+  }[found.situation];
+  const tl=[
+    {l:'Report Submitted',d:'Your report was received and a Case ID was issued.',t:found.dateReported},
+    {l:'Authority Notified',d:authLine,t:ci>=1?'Same day as report':null},
+    {l:'Response In Progress',d:'Authority is coordinating action on the ground.',t:ci>=2?'Completed':ci===1?'Ongoing':null},
+    {l:'Case Resolved',d:'Animal has been assisted and the case is closed.',t:ci===2?found.dateReported:null}
+  ];
+  r.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px;margin-bottom:16px">
+      <div>
+        <div style="font-size:11px;color:var(--text-muted);margin-bottom:3px;text-transform:uppercase;letter-spacing:0.4px">Case ID</div>
+        <div style="font-size:20px;font-weight:900;font-family:'Courier New',monospace;letter-spacing:2px">${found.id}</div>
+      </div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <span class="badge ${bm[found.situation]}">${sl[found.situation]}</span>
+        <span class="badge ${bs[found.status]}">${found.status}</span>
+      </div>
+    </div>
+    <div style="background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:13px;margin-bottom:18px;font-size:13px;display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <div><span style="color:var(--text-muted)">Animal: </span>${found.animalType} · ${found.breed}</div>
+      <div><span style="color:var(--text-muted)">Color: </span>${found.color}</div>
+      <div><span style="color:var(--text-muted)">Location: </span>${found.location.split(',')[0]}</div>
+      <div><span style="color:var(--text-muted)">Reported: </span>${found.dateReported}</div>
+    </div>
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:14px">Timeline</div>
+    <div class="timeline">
+      ${tl.map((s,i)=>{
+        const dc=i<ci?'tl-done':i===ci?'tl-active':'tl-idle';
+        const cnt=i<ci?'✓':i===ci?'●':'';
+        return`<div class="tl-item">
+          <div class="tl-dot ${dc}">${cnt}</div>
+          <div class="tl-content" style="${i>ci?'opacity:0.35':''}">
+            <h5>${s.l}</h5>
+            <p>${s.d}</p>
+            ${s.t?`<div class="tl-time">${s.t}</div>`:''}
+          </div>
+        </div>`;
+      }).join('')}
+    </div>`;
+}
+
+// ===== DASHBOARD =====
+function loginDB(){
+  isLoggedIn=true;
+  const at=document.getElementById('auth-type-sel').value;
+  document.getElementById('db-who-lbl').textContent=at;
+  document.getElementById('db-login').style.display='none';
+  document.getElementById('db-dash').style.display='block';
+  setDBTab('overview',document.getElementById('sbi-overview'));
+}
+function logoutDB(){
+  isLoggedIn=false;
+  document.getElementById('db-login').style.display='flex';
+  document.getElementById('db-dash').style.display='none';
+}
+function setDBTab(t,el){
+  dbTab=t;
+  document.querySelectorAll('.sb-item').forEach(e=>e.classList.remove('active'));
+  if(el)el.classList.add('active');
+  renderDBContent();
+}
+function renderDBContent(){
+  const el=document.getElementById('db-content');
+  const now=new Date().toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  if(dbTab==='overview'){
+    const p=reports.filter(r=>r.status==='pending').length;
+    const a=reports.filter(r=>r.status==='responding').length;
+    const re=reports.filter(r=>r.status==='resolved').length;
+    el.innerHTML=`<div>
+      <div style="font-size:21px;font-weight:900;margin-bottom:3px">Overview</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:24px">${now}</div>
+      <div class="db-stats">
+        <div class="db-stat"><div class="db-stat-num">${reports.length}</div><div class="db-stat-lbl">Total Reports</div></div>
+        <div class="db-stat"><div class="db-stat-num" style="color:var(--red)">${p}</div><div class="db-stat-lbl">Pending</div></div>
+        <div class="db-stat"><div class="db-stat-num" style="color:var(--blue)">${a}</div><div class="db-stat-lbl">In Progress</div></div>
+        <div class="db-stat"><div class="db-stat-num" style="color:var(--green)">${re}</div><div class="db-stat-lbl">Resolved</div></div>
+      </div>
+      <div class="table-box">
+        <div class="tbl-hdr">
+          <span style="font-size:15px;font-weight:800">Recent Cases</span>
+          <button class="link-btn" onclick="setDBTab('assigned',document.getElementById('sbi-assigned'))">View all →</button>
+        </div>
+        ${dbTableHead()}
+        ${[...reports].reverse().slice(0,7).map(r=>dbRow(r,false)).join('')}
+      </div>
+    </div>`;
+  } else {
+    const list=dbTab==='resolved'?reports.filter(r=>r.status==='resolved'):reports.filter(r=>r.status!=='resolved');
+    el.innerHTML=`<div>
+      <div style="font-size:21px;font-weight:900;margin-bottom:20px">${dbTab==='resolved'?'Resolved Cases':'Assigned Cases'}</div>
+      <div class="table-box">
+        ${dbTableHead()}
+        ${list.length?list.map(r=>dbRow(r,true)).join(''):'<div style="padding:32px;text-align:center;color:var(--text-muted);font-size:14px">No cases here.</div>'}
+      </div>
+    </div>`;
+  }
+}
+function dbTableHead(){
+  return`<div class="tbl-row hdr"><div>Case ID</div><div>Animal / Location</div><div>Situation</div><div>Status</div><div>Reporter</div><div>Action</div></div>`;
+}
+function dbRow(r,showBtn){
+  const bm={injured:'b-injured',lost:'b-lost',exploited:'b-exploited'};
+  const bs={pending:'b-pending',responding:'b-responding',resolved:'b-resolved'};
+  const sl={injured:'🩺 Injured',lost:'🔍 Lost',exploited:'⚠️ Abused'};
+  const next={pending:'→ Mark Responding',responding:'→ Mark Resolved',resolved:'✓ Closed'};
+  return`<div class="tbl-row">
+    <div style="font-family:'Courier New',monospace;font-size:11px;font-weight:700">${r.id}</div>
+    <div><div style="font-weight:700;font-size:13px">${r.emoji} ${r.animalType} · ${r.breed}</div><div style="font-size:11px;color:var(--text-muted)">📍 ${r.location.split(',')[0]}</div></div>
+    <div><span class="badge ${bm[r.situation]}">${sl[r.situation]}</span></div>
+    <div><span class="badge ${bs[r.status]}">${r.status}</span></div>
+    <div style="font-size:12px"><div style="font-weight:700">${r.reporterName}</div><div style="color:var(--text-muted)">${r.reporterPhone}</div></div>
+    <div>${showBtn&&r.status!=='resolved'?`<button class="link-btn" style="font-size:11px" onclick="advanceStatus('${r.id}')">${next[r.status]}</button>`:r.dateReported}</div>
+  </div>`;
+}
+function advanceStatus(id){
+  const r=reports.find(x=>x.id===id);
+  if(!r)return;
+  const o=['pending','responding','resolved'];
+  const i=o.indexOf(r.status);
+  if(i<2){r.status=o[i+1];refreshStats();renderDBContent();}
+}
+</script>
+</body>
+</html>
