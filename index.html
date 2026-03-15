@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animal Aid Connect — See it. Report it. Save it.</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<!-- ======= NAV ======= -->
+<nav>
+  <div class="nav-logo" onclick="showPage('home')">
+    <div class="nav-logo-icon">🐾</div>
+    <div class="nav-logo-text">Animal Aid Connect</div>
+  </div>
+  <div class="nav-links">
+    <button class="nav-link" onclick="showPage('lost-found')">Lost &amp; Found</button>
+    <button class="nav-link" onclick="showPage('track')">Track Case</button>
+    <button class="nav-link" onclick="showPage('dashboard')">Authority Login</button>
+    <button class="nav-btn-report" onclick="showPage('report');resetForm();">+ Report Animal</button>
+  </div>
+</nav>
+
+<!-- ======= HOME ======= -->
+<div id="page-home" class="page active">
+  <div class="hero">
+    <div class="hero-badge"><span class="pulse-dot"></span> Emergency Animal Response Platform</div>
+    <h1>Found an animal<br>in distress? <em>Act now.</em></h1>
+    <p>Animal Aid Connect routes your report instantly to the right authority — vets, shelters, or police — so help arrives faster.</p>
+    <div class="hero-btns">
+      <button class="btn-cta btn-cta-primary" onclick="showPage('report');resetForm();">Report an Animal →</button>
+      <button class="btn-cta btn-cta-outline" onclick="showPage('lost-found')">View Lost &amp; Found</button>
+    </div>
+  </div>
+
+  <div class="cat-cards">
+    <div class="cat-card red" onclick="openReportWith('injured')">
+      <span class="cat-icon">🩺</span>
+      <h3>Injured / Sick</h3>
+      <p>Found an animal that's hurt, bleeding, or needs immediate medical attention.</p>
+      <div class="cat-cta">Notify Nearby Vets →</div>
+    </div>
+    <div class="cat-card amber" onclick="openReportWith('lost')">
+      <span class="cat-icon">🔍</span>
+      <h3>Lost / Stray</h3>
+      <p>Found a stray or a pet that appears to have a home but is wandering alone.</p>
+      <div class="cat-cta">Check Missing Reports →</div>
+    </div>
+    <div class="cat-card orange" onclick="openReportWith('exploited')">
+      <span class="cat-icon">⚠️</span>
+      <h3>Being Exploited</h3>
+      <p>Witnessing animal abuse, cruelty, forced labor, or illegal use of animals.</p>
+      <div class="cat-cta">Alert Authorities →</div>
+    </div>
+  </div>
+
+  <div class="stats-strip">
+    <div class="stats-strip-inner">
+      <div><div class="stat-num" id="s-total">0</div><div class="stat-lbl">Total Reports</div></div>
+      <div><div class="stat-num green" id="s-resolved">0</div><div class="stat-lbl">Cases Resolved</div></div>
+      <div><div class="stat-num blue" id="s-active">0</div><div class="stat-lbl">Active Responses</div></div>
+      <div><div class="stat-num amber">12</div><div class="stat-lbl">Partner Vets &amp; Shelters</div></div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-head">
+      <div class="section-title">Recent Reports</div>
+      <button class="link-btn" onclick="showPage('lost-found')">View all →</button>
+    </div>
+    <div class="reports-grid" id="home-recent"></div>
+  </div>
+</div>
+
+<!-- ======= REPORT FORM ======= -->
+<div id="page-report" class="page">
+  <div class="form-wrap">
+    <div class="form-hdr">
+      <h2>File a Report</h2>
+      <p>Your report is routed immediately to the right authority</p>
+    </div>
+    <div class="steps" id="steps-ui"></div>
+
+    <!-- Step 1: Animal Info -->
+    <div id="fstep-1">
+      <div class="fcard">
+        <div class="fgroup">
+          <label class="flabel">Animal Photo</label>
+          <div class="photo-zone" id="pz">
+            <input type="file" accept="image/*" id="photo-file" onchange="handlePhoto(this)">
+            <div id="photo-ph">
+              <div class="upload-icon">📸</div>
+              <div class="upload-title">Click to upload or capture a photo</div>
+              <div class="upload-sub">A clear photo helps identify the animal faster</div>
+            </div>
+            <img id="photo-prev" class="photo-preview-img" style="display:none" alt="Animal photo">
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fgroup">
+            <label class="flabel">Animal Type *</label>
+            <select class="finput" id="a-type">
+              <option value="">Select...</option>
+              <option>Dog</option><option>Cat</option><option>Bird</option>
+              <option>Cow</option><option>Horse</option><option>Monkey</option><option>Other</option>
+            </select>
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Breed</label>
+            <input type="text" class="finput" id="a-breed" placeholder="e.g. Labrador, Stray">
+          </div>
+        </div>
+        <div class="frow">
+          <div class="fgroup">
+            <label class="flabel">Color / Markings *</label>
+            <input type="text" class="finput" id="a-color" placeholder="e.g. Brown with white patch">
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Approximate Age</label>
+            <select class="finput" id="a-age">
+              <option value="">Unknown</option>
+              <option>Young (under 1 year)</option>
+              <option>Adult (1–7 years)</option>
+              <option>Senior (7+ years)</option>
+            </select>
+          </div>
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Current Location *</label>
+          <input type="text" class="finput" id="a-loc" placeholder="e.g. Near Connaught Place, New Delhi — Gate 3">
+        </div>
+        <div class="fgroup">
+          <label class="flabel">Additional Notes</label>
+          <textarea class="finput" id="a-notes" rows="3" placeholder="Describe the animal's condition, behavior, any other important details..."></textarea>
+        </div>
+      </div>
+      <button class="btn-prim" onclick="step2()">Next: Your Details →</button>
+    </div>
+
+    <!-- Step 2: Reporter Info -->
+    <div id="fstep-2" style="display:none">
+      <div class="fcard">
+        <div class="privacy-note">🔒 Your information is kept confidential and only shared with the responding authority.</div>
+        <div class="fgroup">
+          <label class="flabel">Your Full Name *</label>
+          <input type="text" class="finput" id="r-name" placeholder="Full name">
+        </div>
+        <div class="frow">
+          <div class="fgroup">
+            <label class="flabel">Phone Number *</label>
+            <input type="tel" class="finput" id="r-phone" placeholder="+91 XXXXX XXXXX">
+          </div>
+          <div class="fgroup">
+            <label class="flabel">Email (for updates)</label>
+            <input type="email" class="finput" id="r-email" placeholder="you@email.com">
+          </div>
+        </div>
+      </div>
+      <button class="btn-prim" onclick="step3()">Next: Select Situation →</button>
+      <button class="btn-sec" onclick="goStep(1)">← Back</button>
+    </div>
+
+    <!-- Step 3: Situation -->
+    <div id="fstep-3" style="display:none">
+      <div class="fcard">
+        <div class="sit-heading">
+          <div class="sit-title">What is the animal's situation?</div>
+          <div class="sit-sub">Your selection determines which authority is notified immediately.</div>
+        </div>
+        <div class="sit-opts">
+          <div class="sit-opt" id="sopt-injured" onclick="pickSit('injured')">
+            <div class="sit-icon">🩺</div>
+            <div class="sit-text">
+              <h4 class="red">Injured / Sick</h4>
+              <p>Alerts nearby vet clinics and animal hospitals. Best for: wounds, illness, disability, road accident.</p>
+            </div>
+          </div>
+          <div class="sit-opt" id="sopt-lost" onclick="pickSit('lost')">
+            <div class="sit-icon">🔍</div>
+            <div class="sit-text">
+              <h4 class="amber">Lost / Stray</h4>
+              <p>Matches missing pet database, notifies shelters and owners. Best for: wandering pets, strays with a collar.</p>
+            </div>
+          </div>
+          <div class="sit-opt" id="sopt-exploited" onclick="pickSit('exploited')">
+            <div class="sit-icon">⚠️</div>
+            <div class="sit-text">
+              <h4 class="orange">Being Exploited / Abused</h4>
+              <p>Files complaint with police &amp; animal welfare board. Best for: cruelty, neglect, forced labor, illegal trade.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button class="btn-prim" id="submit-btn" onclick="submitReport()" disabled>Submit &amp; Notify Authorities →</button>
+      <button class="btn-sec" onclick="goStep(2)">← Back</button>
+    </div>
+
+    <!-- Step 4: Success -->
+    <div id="fstep-4" style="display:none">
+      <div class="success-box">
+        <div class="success-icon">✅</div>
+        <h3 class="success-title">Report Submitted!</h3>
+        <p class="success-sub">Your unique Case ID:</p>
+        <div class="case-id-big" id="sc-id">—</div>
+        <p class="success-note">Save this ID to track your case status. Authorities have been notified.</p>
+        <div class="notif-sent" id="sc-notifs"></div>
+      </div>
+      <button class="btn-prim" style="margin-top:14px" onclick="showPage('track')">Track This Case →</button>
+      <button class="btn-sec" onclick="showPage('report');resetForm()">Report Another Animal</button>
+    </div>
+  </div>
+</div>
+
+<!-- ======= LOST & FOUND ======= -->
+<div id="page-lost-found" class="page">
+  <div class="lf-topbar">
+    <div class="lf-topbar-inner">
+      <h2 class="lf-title">Lost &amp; Found Board</h2>
+      <p class="lf-sub">All reported lost and stray animals. Contact the reporter if you recognize your pet.</p>
+    </div>
+  </div>
+  <div class="filter-row">
+    <select class="filt" id="f-type" onchange="renderLF()">
+      <option value="">All Animals</option>
+      <option>Dog</option><option>Cat</option><option>Bird</option><option>Cow</option><option>Other</option>
+    </select>
+    <select class="filt" id="f-status" onchange="renderLF()">
+      <option value="">All Statuses</option>
+      <option value="pending">Pending</option>
+      <option value="responding">Responding</option>
+      <option value="resolved">Resolved</option>
+    </select>
+    <select class="filt" id="f-sit" onchange="renderLF()">
+      <option value="">All Types</option>
+      <option value="lost">Lost / Stray</option>
+      <option value="injured">Injured</option>
+    </select>
+    <span class="lf-count-label" id="lf-count"></span>
+  </div>
+  <div class="lf-grid-wrap">
+    <div class="reports-grid" id="lf-grid"></div>
+  </div>
+</div>
+
+<!-- ======= TRACK CASE ======= -->
+<div id="page-track" class="page">
+  <div class="track-wrap">
+    <h2 class="track-title">Track Your Case</h2>
+    <p class="track-sub">Enter the Case ID from your report confirmation to see the latest status.</p>
+    <div class="track-input-row">
+      <input type="text" class="finput track-input" id="track-in" placeholder="e.g. AAC-7X3K2"
+        oninput="this.value=this.value.toUpperCase()">
+      <button class="nav-btn-report track-btn" onclick="trackCase()">Track →</button>
+    </div>
+    <div id="track-err" class="track-err" style="display:none">
+      Case ID not found. Please check and try again.
+    </div>
+    <div id="track-res" style="display:none" class="track-result-box"></div>
+  </div>
+</div>
+
+<!-- ======= DASHBOARD ======= -->
+<div id="page-dashboard" class="page">
+  <div id="db-login" class="login-wrap">
+    <div class="login-box">
+      <h2>Authority Login</h2>
+      <p>Access your case management dashboard.</p>
+      <div class="demo-hint">ℹ️ Demo mode — enter any credentials to access the dashboard.</div>
+      <div class="fgroup">
+        <label class="flabel">Authority Type</label>
+        <select class="finput" id="auth-type-sel">
+          <option>Veterinary Clinic</option>
+          <option>Animal Shelter</option>
+          <option>Police / Animal Welfare</option>
+        </select>
+      </div>
+      <div class="fgroup">
+        <label class="flabel">Email</label>
+        <input type="email" class="finput" value="demo@animalaid.in">
+      </div>
+      <div class="fgroup" style="margin-bottom:22px">
+        <label class="flabel">Password</label>
+        <input type="password" class="finput" value="demo1234">
+      </div>
+      <button class="btn-prim" onclick="loginDB()">Login to Dashboard →</button>
+    </div>
+  </div>
+
+  <div id="db-dash" style="display:none">
+    <div class="db-layout">
+      <div class="sidebar">
+        <div class="sb-who">
+          <small>Logged in as</small>
+          <strong id="db-who-lbl">Veterinary Clinic</strong>
+        </div>
+        <div class="sb-item active" id="sbi-overview" onclick="setDBTab('overview',this)">📊 Overview</div>
+        <div class="sb-item" id="sbi-assigned" onclick="setDBTab('assigned',this)">📋 Assigned Cases</div>
+        <div class="sb-item" id="sbi-resolved" onclick="setDBTab('resolved',this)">✅ Resolved</div>
+        <div class="sb-logout">
+          <button class="link-btn logout-btn" onclick="logoutDB()">← Logout</button>
+        </div>
+      </div>
+      <div class="db-main" id="db-content"></div>
+    </div>
+  </div>
+</div>
+
+<script src="js/script.js"></script>
+</body>
+</html>
